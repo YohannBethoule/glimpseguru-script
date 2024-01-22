@@ -79,7 +79,7 @@
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status !== 200) {
-                    console.error('Tracker request failed: ', xhr.status, xhr.responseText);
+                    console.error('Tracking request failed: ', xhr.status, xhr.responseText);
                 }
             }
         };
