@@ -22,6 +22,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add tracker.min.js
+          git add glimpseguru.min.js
           git commit -m "Build and deploy minified script"
           git push
