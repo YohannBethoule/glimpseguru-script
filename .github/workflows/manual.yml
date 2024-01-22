@@ -1,0 +1,27 @@
+name: Build and Deploy JS Script
+
+on:
+  push:
+    branches:
+      - main # or your default branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # Specify the Node.js version
+      - name: Install Dependencies
+        run: npm install
+      - name: Build Script
+        run: npm run build
+      - name: Commit and Push Minified Script
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add tracker.min.js
+          git commit -m "Build and deploy minified script"
+          git push
