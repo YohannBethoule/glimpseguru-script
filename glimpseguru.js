@@ -63,6 +63,7 @@
     function trackPageView() {
         var data = {
             page_url: window.location.href,
+            pathname: window.location.pathname,
             referrer_url: document.referrer,
             timestamp: Math.floor(Date.now() / 1000),
             session_id: getSessionID(),
