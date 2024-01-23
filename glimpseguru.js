@@ -67,8 +67,14 @@
             timestamp: Math.floor(Date.now() / 1000),
         };
 
-        navigator.sendBeacon(TRACKER_URL + '/sessionend', JSON.stringify(data));
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', `${TRACKER_URL}/track/sessionend`, false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-API-Key', TRACKER_API_KEY);
+        xhr.setRequestHeader('X-Website-ID', TRACKER_WEBSITE_ID);
+        xhr.send(JSON.stringify(data));
     }
+
 
     function trackPageView() {
         var data = {
