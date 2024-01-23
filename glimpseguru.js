@@ -11,6 +11,7 @@
         }
         trackPageView(); // Track the initial page view
         listenToUrlChanges(); // Start listening to URL changes
+        window.addEventListener('beforeunload', trackSessionEnd); // Track session end
     };
 
     function getSessionID() {
@@ -59,6 +60,21 @@
         }
         return 'referral';
     }
+
+    function trackSessionEnd() {
+        var data = {
+            session_id: getSessionID(),
+            timestamp: Math.floor(Date.now() / 1000),
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', `${TRACKER_URL}/track/sessionend`, false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-API-Key', TRACKER_API_KEY);
+        xhr.setRequestHeader('X-Website-ID', TRACKER_WEBSITE_ID);
+        xhr.send(JSON.stringify(data));
+    }
+
 
     function trackPageView() {
         var data = {
