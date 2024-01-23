@@ -11,6 +11,7 @@
         }
         trackPageView(); // Track the initial page view
         listenToUrlChanges(); // Start listening to URL changes
+        window.addEventListener('beforeunload', trackSessionEnd); // Track session end
     };
 
     function getSessionID() {
@@ -58,6 +59,15 @@
             return 'search';
         }
         return 'referral';
+    }
+
+    function trackSessionEnd() {
+        var data = {
+            session_id: getSessionID(),
+            timestamp: Math.floor(Date.now() / 1000),
+        };
+
+        navigator.sendBeacon(TRACKER_URL + '/sessionend', JSON.stringify(data));
     }
 
     function trackPageView() {
