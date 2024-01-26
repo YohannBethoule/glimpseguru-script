@@ -14,6 +14,8 @@
         window.addEventListener('beforeunload', trackSessionEnd); // Track session end
     };
 
+    window.trackCustomEvent = trackCustomEvent
+
     function getSessionID() {
         const sessionData = localStorage.getItem('trackingSession');
         if (sessionData) {
@@ -61,6 +63,16 @@
         return 'referral';
     }
 
+    function generateHttpRequestWithHeaders(endpoint) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', `${TRACKER_URL}/track/${endpoint}`, false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-API-Key', TRACKER_API_KEY);
+        xhr.setRequestHeader('X-Website-ID', TRACKER_WEBSITE_ID);
+
+        return xhr;
+    }
+
     function trackSessionEnd() {
         var data = {
             session_id: getSessionID(),
@@ -87,11 +99,28 @@
             source_type: getSourceType()
         };
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', `${TRACKER_URL}/track/pageview`, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('X-API-Key', TRACKER_API_KEY);
-        xhr.setRequestHeader('X-Website-ID', TRACKER_WEBSITE_ID);
+        var xhr = generateHttpRequestWithHeaders('pageview');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status !== 200) {
+                    console.error('Tracking request failed: ', xhr.status, xhr.responseText);
+                }
+            }
+        };
+
+        xhr.send(JSON.stringify(data));
+    }
+
+    function trackCustomEvent(label, additionalData = null) {
+        var data = {
+            label: label,
+            data: additionalData,
+            timestamp: Math.floor(Date.now() / 1000),
+            session_id: getSessionID(),
+        };
+
+        var xhr = generateHttpRequestWithHeaders('customevent');
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
